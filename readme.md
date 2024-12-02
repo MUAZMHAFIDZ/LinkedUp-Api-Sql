@@ -3,7 +3,6 @@
 Proyek ini dilisensikan di bawah **Lisensi MIT**. Anda bebas menggunakan, menyalin, memodifikasi, dan mendistribusikan dengan syarat dan ketentuan yang diatur oleh lisensi tersebut.
 
 ```bash
-cd server
 npm install
 npx prisma migrate deploy
 node app.js
