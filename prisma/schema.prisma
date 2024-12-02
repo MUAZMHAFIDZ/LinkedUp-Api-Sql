@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  address     String?
+  phone       String?
+  email       String   @unique
+  experience  Experience[]
+  gender      String?
+  description String?
+  education   Education[]
+  role        String   @default("user")
+  image       String?
+  companyId  Int?
+  jobs      Job[]     @relation("JobUsers")
+  jobUsers    JobUsers[]
+  company    Company?    @relation(fields: [companyId], references: [id])
+  password    String
+}
+
+model Education {
+  id       Int    @id @default(autoincrement())
+  degree   String
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+}
+
+model Experience {
+  id       Int    @id @default(autoincrement())
+  jobTitle String
+  company  String
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+}
+
+model Company {
+  id       Int      @id @default(autoincrement())
+  name     String
+  address  String
+  website   String?
+  users    User[]
+  jobs    Job[]
+}
+
+model Job {
+  id          Int      @id @default(autoincrement())
+  title       String
+  salary      Int
+  description String
+  createdAt   DateTime @default(now())
+  status      Boolean  @default(true)
+  image       String
+  userCount   Int      @default(0)
+  users       User[]   @relation("JobUsers")
+  jobUsers    JobUsers[]
+  company     Company?  @relation(fields: [companyId], references: [id])
+  companyId   Int?
+}
+
+model JobUsers {
+  id      Int  @id @default(autoincrement())
+  jobId   Int
+  userId  Int
+  portfolioLink String?
+  description   String
+  job     Job   @relation(fields: [jobId], references: [id])
+  user    User  @relation(fields: [userId], references: [id])
+  @@unique([jobId, userId])
+}
